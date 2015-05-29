@@ -50,15 +50,24 @@ dependencies:
 """
 
 import os
-import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 import shutil
 import tempfile
 import subprocess
 import base64
-import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 import urllib
 import re
-import Texml.processor
+try:
+    import Texml.processor
+except ImportError:
+    pass
 import xeputils.repository
 
 
@@ -94,7 +103,7 @@ def buildXHTML(xep, outpath=None, xslpath=None):
                          stdout=outfile,
                          stderr=subprocess.PIPE,
                          cwd=temppath)
-    (dummy, error) = p.communicate(xep.raw)
+    (dummy, error) = p.communicate(xep.raw.encode('utf-8'))
     outfile.close()
     if error:
         xep.buildErrors.append(
@@ -111,7 +120,7 @@ def buildXHTML(xep, outpath=None, xslpath=None):
                          stdout=outfile,
                          stderr=subprocess.PIPE,
                          cwd=temppath)
-    (dummy, error) = p.communicate(xep.raw)
+    (dummy, error) = p.communicate(xep.raw.encode('utf-8'))
     outfile.close()
     if error:
         xep.buildErrors.append(
@@ -128,7 +137,7 @@ def buildXHTML(xep, outpath=None, xslpath=None):
                          stdout=outfile,
                          stderr=subprocess.PIPE,
                          cwd=temppath)
-    (dummy, error) = p.communicate(xep.raw)
+    (dummy, error) = p.communicate(xep.raw.encode('utf-8'))
     outfile.close()
     if error:
         xep.buildErrors.append(
@@ -172,7 +181,7 @@ def buildPDF(xep, outpath=None, xslpath=None):
 
     # save inline images in tempdir
     for (no, img) in enumerate(xep.images):
-        up = urlparse.urlparse(img)
+        up = urlparse(img)
         if up.scheme == 'data':
             head, data = up.path.split(',')
             # Tobias suggested to do something sensible with charset, mimetype
@@ -213,14 +222,14 @@ def buildPDF(xep, outpath=None, xslpath=None):
                          stdout=outfile,
                          stderr=subprocess.PIPE,
                          cwd=temppath)
-    (dummy, error) = p.communicate(xep.raw)
+    (dummy, error) = p.communicate(xep.raw.encode('utf-8'))
     outfile.close()
     if error:
         xep.buildErrors.append(
             "Error while generating tex.xml for {0}: {1}".format(str(xep), error))
 
     # Create TeX
-    outfile = StringIO.StringIO()
+    outfile = StringIO()
     try:
         Texml.processor.process(
             in_stream=texxmlfile, out_stream=outfile, encoding="UTF-8")
