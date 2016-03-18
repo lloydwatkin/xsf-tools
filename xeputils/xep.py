@@ -448,6 +448,40 @@ class XEP(object):
                     self.readXEP()
                 commitIndex += 1
 
+    def isUpToDate(self, outpath=None, xslpath=None, imagespath=None):
+        """
+        Check if the output is still up-to-date based on timestamps
+
+        Arguments:
+          outpath (str):    The full path were the tree of the generated XEPs should
+                            be build. When unspecified, a temporary directory in the
+                            systems default temporary file location is used.
+          xslpath (str):    The path where the xsl stylesheets can be found. When
+                            not specified a directory based on the xep file location
+                            is guessed.
+          imagespath (str): The path where the images can be found. When not specified
+                            a directory based on the xep file location is guessed.
+
+        Returns: (bool)
+        """
+        if not outpath and self.outpath:
+            outpath = self.outpath
+        if not xslpath and self.xslpath:
+            xslpath = self.xslpath
+        if not imagespath and self.imagespath:
+            imagespath = self.imagespath
+        try:
+            last_built = os.path.getmtime(xeputils.builder.getOutputFilename(self, outpath, 'pdf'))
+            last_built = max(last_built, os.path.getmtime(xeputils.builder.getOutputFilename(self, outpath, 'html')))
+        except OSError, e:
+            # one of the files didn't exist, force rebuild
+            return False
+        for fn in xeputils.builder.getDependencies(self, xslpath, imagespath):
+            if os.path.exists(fn) and os.path.getmtime(fn) > last_built:
+                return False
+        return True
+
+
     def buildXHTML(self, outpath=None, xslpath=None):
         """
         Generates a nice formatted XHTML file from the XEP.

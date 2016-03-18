@@ -62,6 +62,43 @@ import Texml.processor
 import xeputils.repository
 
 
+def getDependencies(xep, xslpath=None, imagespath=None):
+    """
+    Generates a list of dependencies for this xep. The list of dependencies is static,
+    is likely to overshoot, and doesn't include any remote dependencies.
+
+    Arguments:
+      xslpath (str):    The path where the xsl stylesheets can be found. When
+                        not specified a directory based on the xep file location
+                        is guessed.
+      imagespath(str):  The path where the images can be found. When not
+                        specified, a directory based on the XEP file location is
+                        guessed.
+    """
+    if imagespath is None:
+        imagespath = "../images/"
+    imagespath = os.path.abspath(os.path.join(imagespath))
+    if not xslpath:
+        if os.path.basename(xep.path) == 'inbox':
+            xslpath = os.path.abspath(os.path.join(xep.path, ".."))
+        else:
+            xslpath = xep.path
+
+    return [xep.filename,] + [os.path.join(xslpath, x) for x in (
+                "xep.ent", "xep.dtd", "xep.xsl",
+                "ref.xsl", "examples.xsl", "xep2texml.xsl",
+                os.path.join(imagespath, "xmpp.pdf"),
+                os.path.join(imagespath, "xmpp-text.pdf"),
+                "deps/adjcalc.sty",
+                "deps/collectbox.sty", "deps/tc-dvips.def", "deps/tc-pgf.def",
+                "deps/trimclip.sty", "deps/adjustbox.sty", "deps/tabu.sty",
+                "deps/tc-pdftex.def", "deps/tc-xetex.def")]
+
+
+def getOutputFilename(xep, outpath, ext):
+    return os.path.join(outpath, "xep-{}.{}".format(xep.nrFormatted, ext))
+
+
 def buildXHTML(xep, outpath=None, xslpath=None):
     """
     Generates a nice formatted XHTML file from the XEP.
@@ -86,8 +123,7 @@ def buildXHTML(xep, outpath=None, xslpath=None):
         shutil.copy(os.path.join(xslpath, fle), temppath)
 
     # XHTML
-    outfile = open(
-        os.path.join(outpath, "xep-{}.html".format(xep.nrFormatted)), "w")
+    outfile = open(getOutputFilename(xep, outpath, 'html'), "w")
     xsl = os.path.join(temppath, "xep.xsl")
     p = subprocess.Popen(["xsltproc", xsl, "-"],
                          stdin=subprocess.PIPE,
@@ -120,8 +156,7 @@ def buildXHTML(xep, outpath=None, xslpath=None):
     # Examples
     if not os.path.exists(os.path.join(outpath, "examples")):
         os.makedirs(os.path.join(outpath, "examples"))
-    outfile = open(
-        os.path.join(outpath, "examples", "{}.xml".format(xep.nrFormatted)), "w")
+    outfile = open(getOutputFilename(xep, outpath, 'html'), "w")
     xsl = os.path.join(temppath, "examples.xsl")
     p = subprocess.Popen(["xsltproc", xsl, "-"],
                          stdin=subprocess.PIPE,
@@ -206,9 +241,8 @@ def buildPDF(xep, outpath=None, xslpath=None, imagespath=None):
             f.close()
             request.close()
 
-    texxmlfile = os.path.join(
-        temppath, "xep-{}.tex.xml".format(xep.nrFormatted))
-    texfile = os.path.join(temppath, "xep-{}.tex".format(xep.nrFormatted))
+    texxmlfile = getOutputFilename(xep, temppath, "tex.xml")
+    texfile = getOutputFilename(xep, temppath, "tex")
 
     # prepare for texml processing
     outfile = open(texxmlfile, "w")
@@ -265,8 +299,7 @@ def buildPDF(xep, outpath=None, xslpath=None, imagespath=None):
 
     # move the PDF out of the way and clean up
     try:
-        shutil.copy(
-            os.path.join(temppath, "xep-{}.pdf".format(xep.nrFormatted)), outpath)
+        shutil.copy(getOutputFilename(xep, temppath, "pdf"), outpath)
     except IOError:
         xep.buildErrors.append(
             "FATAL: Generating PDF for {} failed.".format(str(xep)))
