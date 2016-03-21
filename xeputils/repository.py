@@ -203,16 +203,22 @@ class AllXEPs(object):
         if showprogress:
             sys.stdout.write("\rReverting interm XEPs")
             sys.stdout.flush()
-            counter = 1
+        counter = 1
         self.revertInterims()
         for xep in sorted(self.xeps):
-            if showprogress:
-                sys.stdout.write("\rBuilding XEP: ... {:<40}  [{}/{}]".format(
-                    xep.filename[-40:], counter, len(self.xeps)))
-                sys.stdout.flush()
-                counter += 1
-            xep.buildXHTML(self.outpath, self.xslpath)
-            xep.buildPDF(self.outpath, self.xslpath, self.imagespath)
+            if xep.isUpToDate(self.outpath, self.xslpath, self.imagespath):
+                if showprogress:
+                    sys.stdout.write("\rSkipping XEP: ... {:<40} [{}/{}]".format(
+                        xep.filename[-40:], counter, len(self.xeps)))
+                    sys.stdout.flush()
+            else:
+                if showprogress:
+                    sys.stdout.write("\rBuilding XEP: ... {:<40}  [{}/{}]".format(
+                        xep.filename[-40:], counter, len(self.xeps)))
+                    sys.stdout.flush()
+                xep.buildXHTML(self.outpath, self.xslpath)
+                xep.buildPDF(self.outpath, self.xslpath, self.imagespath)
+            counter += 1
         if showprogress:
             sys.stdout.write("\rBuilding index table")
             sys.stdout.flush()
