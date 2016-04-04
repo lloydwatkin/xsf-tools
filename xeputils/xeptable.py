@@ -34,7 +34,7 @@
 
 from xml.dom.minidom import parse, parseString, Document, getDOMImplementation
 
-HTMLTableHeader = """<table border="1" cellpadding="3" cellspacing="0" class="sortable" id="xeplist">
+HTMLTableHeader = """<table border="1" cellpadding="3" cellspacing="0" class="sortable row" id="xeplist">
   <tr class="xepheader">
     <th align="left">Number</th>
     <th align="left">Name</th>
