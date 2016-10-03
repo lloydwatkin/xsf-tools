@@ -80,6 +80,9 @@ class XEP(object):
                                             when None, a temporary path is used.
         parseErrors (list):             A list of errors that occured while
                                             parsing the XEP.
+        prevVersion (str or None):      The full version string of the
+                                            previous revision of the XEP, None if
+                                            this is the first version.
         raw (str):                      The raw XML of the XEP as string.
         shortname (str or None):        The 'shortname', if the XEP has one,
                                             else None
@@ -196,7 +199,8 @@ class XEP(object):
             self.interim = True
         else:
             self.interim = False
-        revNode = (headerNode.getElementsByTagName("revision")[0])
+        revNodes = headerNode.getElementsByTagName("revision")
+        revNode = revNodes[0]
         dateString = self.__getText__(
             (revNode.getElementsByTagName("date")[0]).childNodes)
         try:
@@ -219,6 +223,11 @@ class XEP(object):
             else:
                 self.minorVersion = 0
                 self.__processParsingError__("major version")
+        self.prevVersion = None
+        if len(revNodes) > 1:
+            revNode = revNodes[1]
+            self.prevVersion = self.__getText__(
+                (revNode.getElementsByTagName("version")[0]).childNodes)
 
         depNode = headerNode.getElementsByTagName("dependencies")
         self.depends = []
