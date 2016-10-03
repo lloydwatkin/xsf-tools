@@ -50,15 +50,19 @@ dependencies:
 """
 
 import os
-import StringIO
+from io import StringIO
 import shutil
 import tempfile
 import subprocess
 import base64
-import urlparse
-import urllib
+try:
+    from urllib.parse import urlparse
+    from urllib.request import urlopen
+except ImportError:
+    # python2 path
+    from urlparse import urlparse
+    from urllib import urlopen
 import re
-import Texml.processor
 import xeputils.repository
 
 
@@ -155,6 +159,7 @@ def buildPDF(xep, outpath=None, xslpath=None, imagespath=None):
                         not specified a directory based on the xep file location
                         is guessed.
     """
+    import Texml.processor
     outpath = xeputils.repository.prepDir(outpath)
     temppath = tempfile.mkdtemp(prefix='XEPbuilder_')
     if imagespath is None:
@@ -177,7 +182,7 @@ def buildPDF(xep, outpath=None, xslpath=None, imagespath=None):
 
     # save inline images in tempdir
     for (no, img) in enumerate(xep.images):
-        up = urlparse.urlparse(img)
+        up = urlparse(img)
         if up.scheme == 'data':
             head, data = up.path.split(',')
             # Tobias suggested to do something sensible with charset, mimetype
@@ -195,7 +200,7 @@ def buildPDF(xep, outpath=None, xslpath=None, imagespath=None):
             f.write(plaindata)
             f.close()
         elif up.scheme in ['http', 'https']:
-            request = urllib.urlopen(img)
+            request = urlopen(img)
             filename, fileext = os.path.splitext(up.path)
             if not fileext:
                 fileext = ".{}".format(request.info().getsubtype())
@@ -225,7 +230,7 @@ def buildPDF(xep, outpath=None, xslpath=None, imagespath=None):
             "Error while generating tex.xml for {0}: {1}".format(str(xep), error))
 
     # Create TeX
-    outfile = StringIO.StringIO()
+    outfile = StringIO()
     try:
         Texml.processor.process(
             in_stream=texxmlfile, out_stream=outfile, encoding="UTF-8")

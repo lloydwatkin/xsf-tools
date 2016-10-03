@@ -50,7 +50,7 @@ class Config(object):
 
     The configurations are accessible as properties of the instance. EG:
         >> config = xeputils.config.Config()
-        >> print config.confile
+        >> print(config.confile)
         config.py
 
     The configfile has to be a python file in the form:

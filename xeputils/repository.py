@@ -61,7 +61,7 @@ def prepDir(path=None):
     else:
         # Do something innocent when no path is provided
         path = tempfile.mkdtemp(prefix='XEPs_')
-    print "creating {} for output".format(path)
+    print("creating {} for output".format(path))
     return path
 
 
@@ -286,9 +286,9 @@ class AllXEPs(object):
         e = self.formatErrors()
         if not self.config.nologtostdout:
             if e:
-                print e
+                print(e)
             else:
-                print "No errors"
+                print("No errors")
         if self.config.logtomail:
             if e:
                 m = xeputils.mail.LogMail(self.config, e)
