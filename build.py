@@ -43,15 +43,17 @@ import os
 
 # TODO move xeputils into it's own PyPI project
 try:
-    import xeputils
+    from xeputils.config import Config
+    from xeputils.repository import AllXEPs
 except ImportError:
     # hack to import relative to this script, but don't mess with
-    # the path when nog needed
+    # the path when not needed
     sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-    import xeputils
+    from xeputils.config import Config
+    from xeputils.repository import AllXEPs
 
-config = xeputils.config.Config()
+config = Config()
 
-xeps = xeputils.repository.AllXEPs(config)
+xeps = AllXEPs(config)
 xeps.buildAll(showprogress=config.debug)
 xeps.processErrors()

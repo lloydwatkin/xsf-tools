@@ -300,7 +300,7 @@ class XEP(object):
         items.remove('xep')  # no need for this one
         items.remove('raw')  # no need for this one
         items.sort(reverse=True)  # hack to get a nicer order
-        print self.__str__()
+        print(self.__str__())
         for item in items:
             if item == "images":
                 imgs = []
@@ -311,9 +311,9 @@ class XEP(object):
                             "{0} ({1} bytes)".format(imgmeta, len(imgdata)))
                     else:
                         imgs.append(img)
-                print "  {:<18}  {}".format(item, imgs)
+                print("  {:<18}  {}".format(item, imgs))
             else:
-                print "  {:<18}  {}".format(item, self.__dict__[item])
+                print("  {:<18}  {}".format(item, self.__dict__[item]))
 
     def setDeferred(self):
         """

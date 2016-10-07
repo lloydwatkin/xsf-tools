@@ -36,13 +36,6 @@
 Utility functions for handling XEPs.
 """
 
-import builder
-import config
-import mail
-import repository
-import xep
-import xeptable
-
 # metadata:
 __authors__ = ["Winfried Tilanus <winfried@tilanus.com>"]
 __credits__ = ["Tobias Markmann <tm@ayena.de>",

@@ -134,9 +134,8 @@ class XEPTable(object):
           overwritten.
         """
         self.doc.getElementsByTagName("xeps")[0].normalize()
-        f = open(filename, "wb")
-        self.doc.writexml(f)
-        f.close()
+        with open(filename, "wt") as f:
+            self.doc.writexml(f)
 
     def writeHTMLTable(self, filename):
         """
@@ -155,9 +154,8 @@ class XEPTable(object):
                     atrib)[0].childNodes[0].data
             html += HTMLTableRow.format(**atribs)
         html += HTMLTableFooter
-        f = open(filename, "w")
-        f.write(html)
-        f.close()
+        with open(filename, "w") as f:
+            f.write(html)
 
     def __str__(self):
         """
