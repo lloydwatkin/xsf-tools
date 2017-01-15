@@ -36,12 +36,12 @@
 Utility functions for handling XEPs.
 """
 
-import builder
-import config
-import mail
-import repository
-import xep
-import xeptable
+from . import builder
+from . import config
+from . import mail
+from . import repository
+from . import xep
+from . import xeptable
 
 # metadata:
 __authors__ = ["Winfried Tilanus <winfried@tilanus.com>"]

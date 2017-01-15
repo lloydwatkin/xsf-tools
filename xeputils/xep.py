@@ -123,7 +123,7 @@ class XEP(object):
         if error:
             self.gittoplevel = None
         else:
-            self.gittoplevel = out.strip()
+            self.gittoplevel = out.strip().decode('utf8')
         # parse the XEP
         f = open(self.filename, 'r')
         self.raw = f.read()
@@ -296,11 +296,11 @@ class XEP(object):
         """
         Prints a nice overview of the parsed info of the XEP.
         """
-        items = self.__dict__.keys()
+        items = list(self.__dict__.keys())
         items.remove('xep')  # no need for this one
         items.remove('raw')  # no need for this one
         items.sort(reverse=True)  # hack to get a nicer order
-        print self.__str__()
+        print(self)
         for item in items:
             if item == "images":
                 imgs = []
@@ -311,9 +311,9 @@ class XEP(object):
                             "{0} ({1} bytes)".format(imgmeta, len(imgdata)))
                     else:
                         imgs.append(img)
-                print "  {:<18}  {}".format(item, imgs)
+                print("  {:<18}  {}".format(item, imgs))
             else:
-                print "  {:<18}  {}".format(item, self.__dict__[item])
+                print("  {:<18}  {}".format(item, self.__dict__[item]))
 
     def setDeferred(self):
         """

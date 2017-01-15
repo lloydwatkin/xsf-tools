@@ -9,6 +9,7 @@ http://logs.xmpp.org/editor/2014-06-10/#18:36:56
 
 For building XEPs it right now depends on:
 
+* python (executable binary, either 2.7+ or 3.3+)
 * xsltproc (executable binary, debian package xsltproc)
 * texml (python module, for source see: http://getfo.org)
 * xelatex (executable binary, debian package texlive-xetex) Note: some recent

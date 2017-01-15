@@ -53,18 +53,18 @@ config = xeputils.config.Config()
 if 1:
     a = xeputils.repository.AllXEPs(config)
 if 1:
-    print "Interim:"
-    print a.getInterim()
-    print "No short name:"
-    print a.getNoShortName()
-    print "Last Call:"
-    print a.getLastCall()
-    print "Expired:"
+    print("Interim:")
+    print(a.getInterim())
+    print("No short name:")
+    print(a.getNoShortName())
+    print("Last Call:")
+    print(a.getLastCall())
+    print("Expired:")
     for i in a.getExpired():
-        print i, i.date
+        print(i, i.date)
         i.pprint()
 if 0:
-    print "With images:"
+    print("With images:")
     for i in a.getWithImages():
         i.pprint()
         i.buildPDF()
@@ -78,7 +78,7 @@ if 0:
         x = a.getExpired()[0]
         x.defer()
 if 0:
-    print "Building all"
+    print("Building all")
     a.buildAll(showprogress=True)
 if 1:
     a.processErrors()
